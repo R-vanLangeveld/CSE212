@@ -13,7 +13,16 @@ public static class Arrays
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
 
-        return []; // replace this return statement with your own
+        /* Create a type double array with a size of "length" */
+        var results = new double[length];
+        /* A basic for loop is needed */
+        for (int i = 0; i < length; i++) {
+            /* Inside the for loop, set the value of the array at i as the result of "number" * (i + 1) */
+            results[i] = number * (i + 1);
+        }
+
+        /* Return the array */
+        return results;
     }
 
     /// <summary>
@@ -29,5 +38,12 @@ public static class Arrays
         // Remember: Using comments in your program, write down your process for solving this problem
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
+
+        /* Use GetRange() to store the range of numbers to be moved, you will need to subtract "amount" from "data.Count" to find the index */
+        var range = data.GetRange(data.Count - amount, amount);
+        /* Remove the range of numbers using RemoveRange(), the inside of the parentheses should look the same as GetRange() */
+        data.RemoveRange(data.Count - amount, amount);
+        /* Use InsertRange() with an index of 0 to put your stored range at the start of "data" */
+        data.InsertRange(0, range);
     }
 }
