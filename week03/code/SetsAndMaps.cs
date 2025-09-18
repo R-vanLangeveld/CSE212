@@ -1,4 +1,7 @@
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
+using NuGet.Frameworks;
 
 public static class SetsAndMaps
 {
@@ -18,11 +21,28 @@ public static class SetsAndMaps
     /// it would not match anything else (remember the assumption above
     /// that there were no duplicates) and therefore should not be returned.
     /// </summary>
-    /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
+    /// <param name="">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        List<string> pair = new List<string>();
+
+        /* this works but has a time complexity of O(n²) and uses no sets */
+        for (int i = 0; i < words.Length - 1; i++)
+        {
+            if (words[i][0] != words[i][1])
+            {
+                for (var x = i + 1; x < words.Length; x++)
+                {
+                    if (words[i][0] == words[x][1] && words[i][1] == words[x][0])
+                    {
+                        pair.Add($"{words[x]} & {words[i]}");
+                    }
+                }
+            }
+        }
+
+        string[] pairs = pair.ToArray();
+        return pairs;
     }
 
     /// <summary>
@@ -42,7 +62,14 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            if (degrees.ContainsKey(fields[3]))
+            {
+                degrees[fields[3]]++;
+            }
+            else
+            {
+                degrees.Add(fields[3], 1);
+            }
         }
 
         return degrees;
@@ -66,8 +93,66 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        var letters1 = new Dictionary<char, int>();
+        var letters2 = new Dictionary<char, int>();
+        var letters = new HashSet<char>();
+        var equal = false;
+        var same = 0;
+
+        word1 = word1.Replace(" ", "").ToLower();
+        word2 = word2.Replace(" ", "").ToLower();
+
+        foreach (var x in word1)
+        {
+            if (letters1.ContainsKey(x))
+            {
+                letters1[x] = letters1[x] + 1;
+            }
+            else
+            {
+                letters1.Add(x, 1);
+                letters.Add(x);
+            }
+        }
+
+        foreach (var x in word2)
+        {
+            if (letters2.ContainsKey(x))
+            {
+                letters2[x] = letters2[x] + 1;
+            }
+            else
+            {
+                letters2.Add(x, 1);
+            }
+        }
+
+        if (letters1.Count == letters2.Count)
+        {
+            foreach (var i in letters)
+            {
+                if (letters2.ContainsKey(i))
+                {
+                    if (letters1[i] == letters2[i])
+                    {
+                        same++;
+                    }
+                }
+            }
+            if (same == letters.Count)
+            {
+                equal = true;
+            }
+        }
+
+        if (equal == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -96,11 +181,14 @@ public static class SetsAndMaps
 
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
 
-        // TODO Problem 5:
-        // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
-        // on those classes so that the call to Deserialize above works properly.
-        // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
-        // 3. Return an array of these string descriptions.
-        return [];
+        var features = featureCollection.features;
+        var eqDescs = new string[features.Length];
+
+        for (var i = 0; i < features.Length; i++)
+        {
+            eqDescs.SetValue($"{features[i].Properties.Place} - Mag {features[i].Properties.Mag}", i);
+        }
+
+        return eqDescs;
     }
 }
