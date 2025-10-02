@@ -15,7 +15,14 @@ public static class Recursion
     public static int SumSquaresRecursive(int n)
     {
         // TODO Start Problem 1
-        return 0;
+        if (n <= 0)
+        {
+            return n;
+        }
+        else
+        {
+            return n * n + SumSquaresRecursive(n - 1);
+        }
     }
 
     /// <summary>
@@ -40,6 +47,20 @@ public static class Recursion
     public static void PermutationsChoose(List<string> results, string letters, int size, string word = "")
     {
         // TODO Start Problem 2
+        if (word.Length == size)
+        {
+            if (!results.Contains(word))
+            {
+                results.Add(word);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < letters.Length; i++)
+            {
+                PermutationsChoose(results, letters.Remove(i, 1), size, word + letters[i]);
+            }
+        }
     }
 
     /// <summary>
@@ -97,9 +118,23 @@ public static class Recursion
             return 4;
 
         // TODO Start Problem 3
+        if (remember == null)
+        {
+            remember = new Dictionary<int, decimal>();
+        }
+
+        decimal ways = 0;
+        if (remember.ContainsKey(s))
+        {
+            return remember[s];
+        }
+        else
+        {
+            ways = CountWaysToClimb(s - 1, remember) + CountWaysToClimb(s - 2, remember) + CountWaysToClimb(s - 3, remember);
+            remember[s] = ways;
+        }
 
         // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
         return ways;
     }
 
@@ -117,27 +152,194 @@ public static class Recursion
     /// some of the string functions like IndexOf and [..X] / [X..] to be useful in solving this problem.
     /// </summary>
     public static void WildcardBinary(string pattern, List<string> results)
+    // public static void WildcardBinary(string pattern, List<string> results, int? asterisk = null)
     {
         // TODO Start Problem 4
+
+        // I can't figure this out
+        // I can't even figure out how to make it work without recursion
+        
+        // int totalAsterisks = 0;
+        // if (asterisk == null)
+        // {
+        //     asterisk = 0;
+        //     foreach (var item in pattern)
+        //     {
+        //         if (item == '*')
+        //         {
+        //             asterisk ++;
+        //             totalAsterisks ++;
+        //         }
+        //     }
+        // }
+        // Console.Write("Asterisks: " + asterisk + "\n");
+
+        if (pattern != "")
+        {
+            var test1 = "";
+            // var test2 = pattern;
+            // var result = "";
+            // var result = pattern;
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                if (pattern[i] == '*')
+                {
+                    // if (asterisk % 2 == 1)
+                    // {
+                    //     asterisk--;
+                    test1 += "1";
+                    Console.Write("Mid 1 test1: " + test1 + "\n");
+                    // test2 = test2.Remove(i, 1);
+                    // test2 = test2.Insert(i, "1");
+                    // Console.Write("Mid 1 test2: " + test2 + "\n");
+                    // }
+                    // else if (asterisk % 2 == 0)
+                    // {
+                    //     test1 += "0";
+                    //     // asterisk--;
+                    //     Console.Write("Mid 2 test1: " + test1 + "\n");
+                    //     test2 = test2.Remove(i, 1);
+                    //     test2 = test2.Insert(i, "0");
+                    //     Console.Write("Mid 2 test2: " + test2 + "\n");
+                    // }
+                    // WildcardBinary(test2, results, totalAsterisks);
+                }
+                else
+                {
+                    test1 += pattern[i];
+                    // Console.Write("Mid 1 test1: " + test1 + "\n");
+                }
+                // WildcardBinary(test2, results);
+            }
+            // Console.Write("End test1: " + test1 + "\n");
+            // Console.Write("End test2: " + test2 + "\n");
+            // Console.Write("Asterisks: " + asterisk + "\n");
+            results.Add(test1); // 110101
+            // results.Add(test2); // 110000
+
+            // Maybe this can help??
+            /* var result = "";
+            if (result.Length == pattern.Length && result.Contains('*') == false)
+            {
+                if (!results.Contains(result))
+                {
+                    results.Add(result);
+                }
+            }
+            else if (result.Contains('*'))
+            {
+                for (int i = 0; i < pattern.Length; i++)
+                {
+                    if (pattern[i] == '*')
+                    {
+                        // result += "1";
+                        // Console.Write("Mid 1 result: " + result + "\n");
+                    }
+                    else
+                    {
+                        result += pattern[i];
+                        // Console.Write("Mid 1 result: " + result + "\n");
+                    }
+                }
+                // WildcardBinary(result, results);
+            }
+            else
+            {
+                // WildcardBinary(pattern, results);
+            }
+            
+            Console.Write("End Result: " + result + "\n");
+            results.Add(result);
+            */
+        }
+        
+        
+        foreach (var item in results)
+        {
+            Console.Write("Standard: " + item + "\n");
+        }
+        results.Sort();
+        foreach (var item in results)
+        {
+            Console.Write("Sorted: " + item + "\n");
+        }
     }
 
     /// <summary>
     /// Use recursion to insert all paths that start at (0,0) and end at the
     /// 'end' square into the results list.
     /// </summary>
-    public static void SolveMaze(List<string> results, Maze maze, int x = 0, int y = 0, List<ValueTuple<int, int>>? currPath = null)
+    public static void SolveMaze(List<string> results, Maze maze, int x = 0, int y = 0, List<ValueTuple<int, int>>? currPath = null, List<ValueTuple<int, int>>? failPath = null)
     {
         // If this is the first time running the function, then we need
         // to initialize the currPath list.
-        if (currPath == null) {
+        if (currPath == null)
+        {
             currPath = new List<ValueTuple<int, int>>();
         }
-        
+        if (failPath == null)
+        {
+            failPath = new List<ValueTuple<int, int>>();
+        }
+
         // currPath.Add((1,2)); // Use this syntax to add to the current path
 
         // TODO Start Problem 5
         // ADD CODE HERE
+        if (maze.Width >= 2 && maze.Height >= 2)
+        {
+            var move = true;
+            currPath.Add((x, y));
 
+            if (maze.IsValidMove(currPath, x, y - 1) && !failPath.Contains((x, y - 1)))
+            {
+                y --;
+            }
+            else if (maze.IsValidMove(currPath, x, y + 1) && !failPath.Contains((x, y + 1)))
+            {
+                y ++;
+            }
+            else if (maze.IsValidMove(currPath, x + 1, y) && !failPath.Contains((x + 1, y)))
+            {
+                x ++;
+            }
+            else if (maze.IsValidMove(currPath, x - 1, y) && !failPath.Contains((x - 1, y)))
+            {
+                x --;
+            }
+            else
+            {
+                move = false;
+            }
+
+            if (move == false && maze.IsEnd(x, y) == false)
+            {
+                currPath.Clear();
+                failPath.Add((x, y));
+                SolveMaze(results, maze, 0, 0, currPath, failPath);
+            }
+            else if (move == true && maze.IsEnd(x, y) == false)
+            {
+                SolveMaze(results, maze, x, y, currPath);
+            }
+            else if (move == true && maze.IsEnd(x, y) == true)
+            {
+                if (results.Count > 0)
+                {
+                    currPath.Add((x, y));
+                    currPath.RemoveRange(0, 1);
+                    results.Add(currPath.AsString());
+                }
+                else
+                {
+                    currPath.Add((x, y));
+                    results.Add(currPath.AsString());
+                    currPath.RemoveRange(2, 3);
+                    currPath.RemoveRange(0, 1);
+                    SolveMaze(results, maze, 0, 0, currPath, failPath);
+                }
+            }
+        }
         // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
     }
 }
